@@ -35,3 +35,13 @@
 * Update Tool
 
 `$ python3 setup.py -u`
+
+
+## TO DO
+* User Names (Full names or nicknames)
+* Bugfix seconde group with only admin 
+* Google Maps location lookup
+
+### Optional
+* File naming option 
+* Optimization for user lookup

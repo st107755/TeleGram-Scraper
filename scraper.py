@@ -5,6 +5,7 @@ import os
 import sys
 import configparser
 import csv
+import pdb
 
 re = "\033[1;31m"
 gr = "\033[1;32m"
@@ -22,6 +23,16 @@ def get_user_name(all_users, all_users_id, id):
             if all_users[i].username is not None:
                 return all_users[i].username
     return ''
+
+def get_all_participants(target_group):
+    all_participants = []
+    all_participants_id = []
+    try:
+        all_participants = client.get_participants(target_group)
+        all_participants_id = [p.id for p in all_participants]
+    finally:
+        return all_participants,all_participants_id
+
 
 # Connection to Telegram Api
 try:
@@ -75,9 +86,7 @@ g_index = input(gr+"[+] Enter a Number : "+re)
 target_group = groups[int(g_index)]
 
 # Get all user in selected chat 
-all_participants = []
-all_participants = client.get_participants(target_group)
-all_participants_id = [p.id for p in all_participants]
+all_participants, all_participants_id = get_all_participants(target_group)
 
 
 print(gr+'[+] Fetching Chat...')
@@ -87,11 +96,13 @@ with open("chat.csv", "w", encoding='UTF-8') as f:
     writer.writerow(['id', 'author', 'text', 'date'])
     for message in client.iter_messages(target_group, limit=None):
         try:
+            #pdb.set_trace()
             text = message.text.replace('\n', ' ').strip() or ''
             date = message.date
             id = message.id
-            if message.from_id is not None :
-                user_id = message.from_id.user_id
+            user_name = ''
+            if message.from_id is not None and len(all_participants) > 0:
+                user_id = message.from_id.user_id                
                 user_name = get_user_name(
                    all_participants, all_participants_id, user_id)
             writer.writerow([id, user_name, text, date])
