@@ -4,13 +4,7 @@ from telethon.tl.types import InputPeerEmpty
 import os
 import sys
 import configparser
-import traceback
-import asyncio
-import threading
 import csv
-import time
-import pdb
-import logging
 
 re = "\033[1;31m"
 gr = "\033[1;32m"
@@ -21,6 +15,7 @@ cpass = configparser.RawConfigParser()
 cpass.read('config.data')
 
 
+#Method for matching user object with id
 def get_user_name(all_users, all_users_id, id):
     for i in range(len(all_users_id)):
         if all_users_id[i] == id:
@@ -28,6 +23,7 @@ def get_user_name(all_users, all_users_id, id):
                 return all_users[i].username
     return ''
 
+# Connection to Telegram Api
 try:
     api_id = cpass['cred']['id']
     api_hash = cpass['cred']['hash']
@@ -44,6 +40,9 @@ if not client.is_user_authorized():
     os.system('clear')
     client.sign_in(phone, input(gr+'[+] Enter the code: '+re))
 
+# Search client groups
+
+# Params for group request
 os.system('clear')
 chats = []
 last_date = None
@@ -65,7 +64,7 @@ for chat in chats:
         groups.append(chat)
     except:
         continue
-
+# User dialog to select groups
 print(gr+'[+] Choose a group to scrape members :'+re)
 i = 0
 for g in groups:
@@ -75,13 +74,14 @@ for g in groups:
 g_index = input(gr+"[+] Enter a Number : "+re)
 target_group = groups[int(g_index)]
 
+# Get all user in selected chat 
 all_participants = []
 all_participants = client.get_participants(target_group)
 all_participants_id = [p.id for p in all_participants]
 
 
 print(gr+'[+] Fetching Chat...')
-
+# Iterating messages and writhing them to a file 
 with open("chat.csv", "w", encoding='UTF-8') as f:
     writer = csv.writer(f, delimiter=";", lineterminator="\n")
     writer.writerow(['id', 'author', 'text', 'date'])
@@ -93,7 +93,7 @@ with open("chat.csv", "w", encoding='UTF-8') as f:
             if message.from_id is not None :
                 user_id = message.from_id.user_id
                 user_name = get_user_name(
-                    all_participants, all_participants_id, user_id)
+                   all_participants, all_participants_id, user_id)
             writer.writerow([id, user_name, text, date])
         except Exception as e:
             continue
