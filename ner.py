@@ -24,4 +24,4 @@ for index, row in df.iterrows():
 print("Totals number of recongnised locations")
 print(classified_sampes)
     
-    # Test
+    # Test 2,3, 4,5
