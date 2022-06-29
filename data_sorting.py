@@ -11,8 +11,14 @@ data_raw = pd.read_csv('chat.csv',delimiter=';')
 td = data_raw [["id","text","date"]].copy()
 td.dropna(inplace=True)
 td.drop(td.tail(1).index,inplace=True)
-split_text=td['text'].str.split('-',expand=True)
-df1= split_text.join(td[["date","id"]])
+st1 = td['text'].str.split(' - ', 2,expand=True).copy()
+st2=st1[2].str.rsplit(' - ', 1,expand=True).copy()
+
+st1n=st1.drop([2], axis=1)
+st2.rename(columns={0: "text"},inplace=True)
+st2n=st1n.join(st2["text"])
+df1= st2n.join(td[["date","id"]])
+
 ndf1=df1.loc[:,['id']].copy()
 
 
@@ -66,23 +72,40 @@ def detect_infotype_chat1 (df,df_out):
     return df_out
 
 #Method to detect entries with street names from chat1
-##in progress
-def detect_streetnames_chat1 (df,df_out):
-    pass
+def detect_streetname_chat1 (df,df_out):
+    streetname_tmp = []
+    str_streets = r"(straße\b|weg\b|str|platz\b|ring|strasse\b|\Stunnel\b|steige|allee)"
+
+    for index, row in df.iterrows():
+        streetname = ""
+        #if  re.search(str_streets,str(df.iloc[index,[2,-2]]), re.IGNORECASE):
+        if  re.search(str_streets,str(df.iloc[index,2]), re.IGNORECASE):
+                streetname = "yes"
+        else:
+                streetname = "no"
+        streetname_tmp.append(streetname)
+
+    df_out ["streetname"] = streetname_tmp
+    return df_out
 
 
-
+df1.reset_index(drop=True, inplace=True)
 ndf2 = detect_time_chat1 (df1,ndf1)
 ndf3 = detect_infotype_chat1 (df1,ndf2)
-ndf3.dropna(subset = ["datetime"], inplace=True)
+ndf3.reset_index(drop=True, inplace=True)
 
-print(ndf3)
-#print(ndf3[ndf3["infotype"]==2])
+ndf4 = detect_streetname_chat1 (df1,ndf3)
+ndf4.dropna(subset = ["datetime"], inplace=True)
+ndf4=ndf4.fillna('')
+
+print(ndf4)
+#print(df1) for text with id as shared key
 #breakpoint()
 
 ###############################################
 ##Next goals
-#Method detect_streetnames_chat1 fertig machen
+#make dataframe handling a bit prittier
+#method to extract address where streetname=="yes"
 #
 ## final dataframe: 
 # columns: id, datetime, infotype(Blitzer,...), streetname(if found),text(?)
