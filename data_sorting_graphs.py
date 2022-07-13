@@ -53,7 +53,6 @@ def detect_infotype_chat1 (df,df_out):
     str_type2 = r"(blitzer|laser|radar)"
     str_type3 = r"(baustelle|sperrung|verkehrsbehinderung|unfall|panne|defektes fahrzeug|defekter lkw|stau|stockender verkehr|gefahr|fahrbahn|auf straße|einsatz)"
     str_type4 = r"(info|vorab)"
-    str_type5 = r"sonstige"
 
     for index, row in df.iterrows():
         itype_int = ""
@@ -112,5 +111,6 @@ print(ndf4)
 # columns: id, datetime, infotype(Blitzer,...), streetname(if found),text(?)
 ###############################################
 
-
+# %% counting & plotting - pie chart
+ndf4['infotype'].value_counts().plot(kind='pie', title='distribution infotypes',autopct='%1.1f%%')
 # %%
