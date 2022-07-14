@@ -17,3 +17,9 @@ def text2geo(locations):
     else:   
         return Point(0,0)
 
+def text2geo_res(locations):
+    if len(locations):
+        q_value = ' '.join(locations)
+        loc_dict = {'q': q_value,'limit':5,'format':'json','adressdetails':1}
+        return requests.get('https://nominatim.openstreetmap.org/search', params= loc_dict).json()
+
