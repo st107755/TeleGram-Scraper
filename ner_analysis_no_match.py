@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 #%% import resultdata
 df = pd.read_csv('chat_geo.csv',delimiter=';')
@@ -40,13 +41,13 @@ df['na_type'].groupby(df['na_type']).count()
 
 # %% counting & plotting - barchart
 #df['na_type'].value_counts().plot.bar(title='missing location barplot')
-sns.set_theme(style="darkgrid")
-ax = sns.countplot(x="na_type", data=df)
-ax.bar_label(ax.containers[0])
+#sns.set_theme(style="darkgrid")
+#ax = sns.countplot(x="na_type", data=df)
+#ax.bar_label(ax.containers[0])
 
 # %% counting & plotting - pie chart
 df['na_type'].value_counts().plot(kind='pie', title='missing location pieplot',autopct='%1.1f%%')
-
+plt.show()
 # %% analysing data with no location -> no text
 df_na_loc = df[df['na_type_key']=='1']
 

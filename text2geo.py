@@ -18,7 +18,7 @@ def text2geo(locations):
         try:
             latitude = float(result[0]['lat'])
             longitude = float(result[0]['lon'])
-            return Point(latitude,longitude)
+            return Point(longitude,latitude)
         except:
             return Point(0,0)
     else:   
